@@ -1,3 +1,4 @@
+   
 .text
 
 main:   lui $8, 0x1001  # $8 <= 0x10010000
@@ -396,9 +397,22 @@ check_29:
     addi $t2, $0, 1  # Carrega o valor 1 em $t2 para comparaÃ§Ã£o
     beq $29, $t2, fimwin
 	
-# Verificar colisÃƒÂ£o entre Hero e Submarino2
 check_colisao:
-    # Comparar posiÃƒÂ§ÃƒÂµes do submarino2 com cor do Hero ($26)
+    # Comparar posicao do submarino1/2 com cor do Hero ($26)
+    #submarino 1
+    lw $t2, 1512($23)   # Borda superior esquerda
+    beq $t2, $26, fim
+    lw $t2, 1516($23)   # Borda superior direita
+    beq $t2, $26, fim
+    lw $t2, 1000($23)   # Lateral esquerda meio
+    beq $t2, $26, fim
+    lw $t2, 1004($23)   # Lateral direita meio
+    beq $t2, $26, fim
+    lw $t2, 2532($23)   # Borda inferior esquerda
+    beq $t2, $26, fim
+    lw $t2, 2556($23)   # Borda inferior direita
+    beq $t2, $26, fim
+    #subimarino 2
     lw $t2, 8680($23)  # esquerda
     beq $t2, $26, fim
 
@@ -450,8 +464,8 @@ pegou_ouro:
     addi $29, $29, 1
     addi $4, $0, 70        # Nota aguda
     addi $5, $0, 200       # Duração
-    addi $6, $0, 80        # Volume
-    addi $7, $0, 14        # Instrumento
+    addi $6, $0, 80        # instrumento
+    addi $7, $0, 40        # volume
     li $2, 31              # Syscall tocar som
     syscall
     jr $31
@@ -758,6 +772,71 @@ sw $9, 2860($8)
 sw $9, 3368($8)
 sw $9, 3372($8)
 
+    # CONFIGURAÇÃO PRINCIPAL
+    addi $6, $0, 19      # 19 = Órgão
+    addi $7, $0, 100     # Volume
+
+    # Primeira NOTA
+    addi $4, $0, 60      # Dó (C4)
+    addi $5, $0, 350     # 350ms 
+    li $2, 31
+    syscall
+    addi $4, $0, 150     # Pausa
+    li $2, 32
+    syscall
+	# SEGUNDA NOTA
+    addi $4, $0, 64      # Mi (E4)
+    addi $5, $0, 350
+    li $2, 31
+    syscall
+    addi $4, $0, 150
+    li $2, 32
+    syscall
+	#TERCEIRA NOTA
+    addi $4, $0, 67      # Sol (G4)
+    addi $5, $0, 400     # TEMPO
+    li $2, 31
+    syscall
+    addi $4, $0, 200     # Pausa
+    li $2, 32
+    syscall
+
+    # QUARTA NOTA OITAVADA
+    addi $4, $0, 67      # Sol (G4)
+    addi $5, $0, 300
+    li $2, 31
+    syscall
+    addi $4, $0, 79      # Sol (G5) - oitava alta
+    addi $5, $0, 500     # TEMPO
+    li $2, 31
+    syscall
+    addi $4, $0, 300     # Pausa
+    li $2, 32
+    syscall
+
+    # QUINTA NOTA OITAVADA
+    addi $4, $0, 64      # Mi (E4)
+    addi $5, $0, 400
+    li $2, 31
+    syscall
+    addi $4, $0, 76      # Mi (E5) - oitava alta
+    addi $5, $0, 600     # TEMPO
+    li $2, 31
+    syscall
+    addi $4, $0, 200     # pausa
+    li $2, 32
+    syscall
+
+    # SEXTA NOTA OITAVADA
+    addi $4, $0, 67      # Sol (G4)
+    addi $5, $0, 1000    # TEMPO
+    li $2, 31
+    syscall
+    addi $4, $0, 79      # Sol (G5)
+    addi $5, $0, 1000	#TEMPO
+    li $2, 31
+    syscall
+    
 j fimmermo
 
 
@@ -1065,6 +1144,60 @@ sw $9, 3936($8)
 sw $9, 3940($8)
 sw $9, 3944($8)
 sw $9, 3948($8)
+
+.data
+    instrumento: .word 57  # 57 = Trombone (instrumento do efeito clássico)
+    volume:      .word 90  # Volume alto (mas não máximo)
+
+.text
+    # Configurações iniciais (igual ao seu código que funciona)
+    lw $a2, instrumento  # Carrega trombone
+    li $a3, 90           # Volume
+
+    # PRIMEIRO "WAH" (nota média caindo)
+    li $a0, 53           # Fá (53)
+    li $a1, 300          # 300ms
+    li $v0, 31           # Syscall 31 (que você confirmou funcionar)
+    syscall
+
+    li $a0, 50           # Ré (50) - queda rápida
+    li $a1, 100          # Nota curta
+    li $v0, 31
+    syscall
+
+    li $a0, 200          # Pausa entre "wahs"
+    li $v0, 32
+    syscall
+
+    # SEGUNDO "WAH" (mais curto)
+    li $a0, 52           # Mi bemol (52)
+    li $a1, 200
+    li $v0, 31
+    syscall
+
+    li $a0, 48           # Dó (48)
+    li $a1, 100
+    li $v0, 31
+    syscall
+
+    li $a0, 200
+    li $v0, 32
+    syscall
+
+    # TERCEIRO "WAH" (mais longo e grave)
+    li $a0, 50           # Ré (50)
+    li $a1, 400
+    li $v0, 31
+    syscall
+
+    li $a0, 45           # Lá grave (45)
+    li $a1, 600           # Nota final mais longa
+    li $v0, 31
+    syscall
+
+    # FIM DO PROGRAMA
+    li $v0, 10
+    syscall
 
 fimmermo:         
 	addi $2, $0, 10
