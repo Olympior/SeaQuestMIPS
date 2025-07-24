@@ -7,6 +7,7 @@ main:   lui $8, 0x1001  # $8 <= 0x10010000
 	addi $24, $24 14000
 	addi $23 $23 8704 #9728 ~ 10212
 	addi $27 $0 121
+	addi $29, $0, 0
         addi $9, $0, 0x1B23BB # $9 <= 0x000000ff Azul do Head
         addi $10, $0,1152 #8192 tela inteira 1152
 	addi $12, $0,128 #128 uma linha
@@ -254,7 +255,6 @@ restart:
 	addi $27 $0 121
 	lui $23, 0x1001
 	addi $23,$23,8700
-	addi $29, $0, 0
 	j subimarino
 	
 dig:    
@@ -288,7 +288,13 @@ digA:
 	addi $24, $24, -4
 	addi $t0, $0, 268510208
 	slt $t1, $24, $t0
-	bne $t1, $0, digD         
+	bne $t1, $0, digD
+	addi $4, $0, 40        #NOTA
+	addi $5, $0, 300       # Duração Da nota
+	addi $6, $0, 22        # INSTRUMENTO
+	addi $7, $0, 30        # Volume
+	li $2, 31
+	syscall         
         j Sub1loop
         
 digD:
@@ -308,6 +314,12 @@ digD:
 	addi $t0, $0, 268525532
 	slt $t1, $t0, $24
 	bne $t1, $0, digA
+	addi $4, $0, 38        #NOTA
+	addi $5, $0, 300       # Duração DA NOTA
+	addi $6, $0, 22        # INSTRUMENTO
+	addi $7, $0, 30        # Volume
+	li $2, 31
+	syscall
 	j Sub1loop 
           
 digW:
@@ -332,7 +344,13 @@ digW:
     	addi $24, $24, -512
     	addi $t0, $0, 268510204
 	slt $t1, $24, $t0
-	bne $t1, $0, digS 
+	bne $t1, $0, digS
+	addi $4, $0, 41        #NOTA
+	addi $5, $0, 300       # Duração da nota
+	addi $6, $0, 22        # INSTRUMENTO
+	addi $7, $0, 30        # Volume
+	li $2, 31
+	syscall
     	j Sub1loop  
                     
 digS:
@@ -360,7 +378,12 @@ digS:
     	addi $t0, $0, 268525536
 	slt $t1, $t0, $24
 	bne $t1, $0, digW
-
+	addi $4, $0, 39        #NOTA
+	addi $5, $0, 300       # Duração DA NOTA
+	addi $6, $0, 22        # INSTRUMENTO
+	addi $7, $0, 30        # Volume
+	li $2, 31
+	syscall
     	j Sub1loop 
     	
 ganhou:
@@ -420,10 +443,17 @@ check_ouro:
 fimcheckouro:    jr $31
 
 pegou_ouro:
+	bne $29 $0 fimcheckouro
     # Apaga o ouro (pinta com a cor do fundo)
     addi $t2, $0, 0x00000B85  # Cor do fundo
     sw $t2, 9520($25)         # Sobrescreve o ouro
     addi $29, $29, 1
+    addi $4, $0, 70        # Nota aguda
+    addi $5, $0, 200       # Duração
+    addi $6, $0, 80        # Volume
+    addi $7, $0, 14        # Instrumento
+    li $2, 31              # Syscall tocar som
+    syscall
     jr $31
 
 
@@ -727,11 +757,6 @@ sw $9, 2856($8)
 sw $9, 2860($8)
 sw $9, 3368($8)
 sw $9, 3372($8)
-
-
-
-
-
 
 j fimmermo
 
