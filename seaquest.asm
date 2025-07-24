@@ -370,16 +370,12 @@ ganhou:
 	jr $31
 	
 check_29:
-	add $4 $0 $24
-    	addi $2 $0 1
-    	syscall
-    addi $t2, $0, 1           # Carrega o valor 1 em $t2 para compara��o
-    bne $29, $t2, check_colisao  # Se $29 != 1, v� para done
-    j loopWin
+    addi $t2, $0, 1  # Carrega o valor 1 em $t2 para comparação
+    beq $29, $t2, fimwin
 	
-# Verificar colisão entre Hero e Submarino2
+# Verificar colisÃ£o entre Hero e Submarino2
 check_colisao:
-    # Comparar posições do submarino2 com cor do Hero ($26)
+    # Comparar posiÃ§Ãµes do submarino2 com cor do Hero ($26)
     lw $t2, 8680($23)  # esquerda
     beq $t2, $26, fim
 
@@ -406,17 +402,17 @@ check_colisao:
 
     lw $t2, 9724($23)  # direita
     beq $t2, $26, fim
-    # Se nenhuma colisão, continuar
+    # Se nenhuma colisÃ£o, continuar
     jr $31
     
 
 check_ouro:
 	bne $29 $0 fimcheckouro
-    # Pega a posição do ouro
+    # Pega a posiÃ§Ã£o do ouro
     lw $t0, 9520($25)   # Carrega o pixel do ouro
     
-    # Pega a posição CENTRAL do herói (parte do meio do personagem)
-    lw $t1, 516($24)    # Posição central do herói
+    # Pega a posiÃ§Ã£o CENTRAL do herÃ³i (parte do meio do personagem)
+    lw $t1, 516($24)    # PosiÃ§Ã£o central do herÃ³i
     
     # Compara as cores
     beq $t1, $t0, pegou_ouro  # Se forem iguais, pegou o ouro
@@ -427,19 +423,21 @@ pegou_ouro:
     # Apaga o ouro (pinta com a cor do fundo)
     addi $t2, $0, 0x00000B85  # Cor do fundo
     sw $t2, 9520($25)         # Sobrescreve o ouro
-    #addi $24, $0 32764
-    #lui $8, 0x1001
-    addi $9, $0, 0x00000B85
     addi $29, $29, 1
     jr $31
+
+
+fimwin:    
+    addi $24, $0 32764
+    lui $8, 0x1001
+    addi $9, $0, 0x00000B85 
     
-loopWin:
+fimwin2:
     beq $24, $0, win                                               
     sw $9, 0($8)
     addi $8, $8, 4
     addi $24, $24, -1
-    j loopWin
-    jr $31
+    j fimwin2
 
 
 fim:    
